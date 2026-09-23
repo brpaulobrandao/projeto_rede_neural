@@ -1,0 +1,14 @@
+# Material da aula (nao redistribuir)
+exemplo4.py
+
+# Claude Code
+.claude/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
