@@ -1,4 +1,8 @@
-# projeto_rede_neural
+# Projeto Rede Neural
+
+Equipe:
+
+
 
 ## Introdução
 
@@ -61,4 +65,41 @@ Por fim, para garantir que os cálculos analíticos de ajuste de erro estivessem
 
 O treinamento da rede neural é executado por meio de um processo de gradiente descendente em lote completo (full-batch), no qual cada uma das 3.000 épocas processa a totalidade dos 1.000 exemplos do conjunto de dados de uma só vez. A cada ciclo, o algoritmo calcula a propagação direta (forward), avalia a função de perda e a acurácia, obtém os gradientes via propagação reversa (backward) e atualiza os pesos e viéses utilizando uma taxa de aprendizado ($\eta$) de 0,5. Para garantir um aprendizado fidedigno e sem vazamento de estados anteriores, os parâmetros da rede são reinicializados do zero no início do procedimento com uma semente fixa.
 
-Os resultados demonstraram a eficácia do modelo em aprender os padrões da base de dados, composta por 334 exemplos positivos e 666 negativos. Enquanto a linha de base ingênua — que consiste em classificar sempre a classe majoritária — atinge uma acurácia de 66,60%, o modelo inicia a primeira época com uma perda de 0,7284 e acurácia de apenas 21,00%. Ao longo do treinamento, a rede apresenta uma convergência contínua, reduzindo progressivamente o custo e alcançando, ao final das 3.000 épocas, uma perda final de 0,0744 e uma acurácia final de 97,30%, superando amplamente o desempenho de referência.
+Os resultados demonstraram a eficácia do modelo em aprender os padrões da base de dados, composta por 334 exemplos positivos e 666 negativos. Enquanto a linha de base ingênua — que consiste em classificar sempre a classe majoritária — atinge uma acurácia de 66,60%, o modelo inicia a primeira época com uma perda de 0,7284 e acurácia de apenas 21,00%. Ao longo do treinamento, a rede apresentou uma convergência contínua, reduzindo progressivamente o custo e alcançando, ao final das 3.000 épocas, uma perda final de 0,0744 e uma acurácia final de 97,30%, superando amplamente o desempenho de referência.
+
+## Resultado
+
+Para validar o desempenho da arquitetura desenvolvida, a avaliação do modelo abrangeu a análise de curvas de aprendizado, a visualização da fronteira de decisão no espaço bidimensional e uma verificação comparativa (*benchmark*) contra a biblioteca *Keras/TensorFlow*.
+
+### 1. Curvas de Aprendizado e Desempenho
+
+Devido ao desbalanceamento de classes introduzido no conjunto de dados (66,6% das instâncias pertencentes à classe negativa e 33,4% à classe positiva), a métrica de acurácia isolada pode ser enganosa, visto que um classificador ingênuo estático alcançaria 66,6% de acurácia sem qualquer aprendizado. 
+
+Conforme ilustrado nos gráficos de acompanhamento por época:
+* **Evolução da Perda:** A função de custo (Entropia Cruzada Binária) apresenta decaimento acentuado durante as primeiras épocas, estabilizando em um valor final de **0,0744**.
+* **Evolução da Acurácia:** O modelo parte de um desempenho inicial de 21,00% na época 0 e atinge **97,30%** ao término das 3.000 épocas, superando amplamente a linha de base de 66,60%.
+
+![Curvas de Perda e Acurácia](image-1.png)
+
+### 2. Fronteira de Decisão
+
+A capacidade da rede profunda de separar o espaço de características bidimensional ($X \in \mathbb{R}^2$) é evidenciada na visualização da fronteira de decisão. A combinação das três camadas ocultas com ativação **ReLU** permitiu ao modelo delimitar uma região não linear complexa e contínua em torno do cluster positivo (classe 0), isolando-o do conjunto majoritário mesmo sob expressiva sobreposição gaussiana.
+
+![Fronteira de Decisão](image-2.png)
+
+### 3. Comparativo: Rede Manual (SGD) vs. Keras (Adam)
+
+Para atestar a exatidão matemática da implementação em *NumPy*, construiu-se uma arquitetura idêntica `[2, 8, 6, 4, 1]` na biblioteca *Keras*, mantendo a mesma função de custo (Entropia Cruzada) e avaliando a convergência.
+
+* **Otimizador:** Enquanto a rede manual utiliza Gradiente Descendente Estocástico em lote completo (SGD/GD, $\eta = 0,5$), o Keras foi configurado com o otimizador *Adam* ($\eta = 0,01$), adequado para evitar estagnação em mínimos locais durante o treinamento via TensorFlow.
+* **Convergência:** Ambas as abordagens convergiram para níveis equivalentes de custo e acurácia. A rede manual alcançou acurácia final de **97,30%** com perda de **0,0744**, corroborando a corretude da arquitetura, das derivações analíticas do *backward pass* e da atualização dos parâmetros.
+
+![Comparativo Rede Manual vs Keras](image-3.png)
+
+## 10. Conclusão
+
+Este trabalho apresentou a evolução e generalização do modelo base (`exemplo4.py`), expandindo uma arquitetura rasa para uma rede neural profunda (*Deep Feedforward*) totalmente vetorizada, capaz de suportar topologias arbitrárias de $L$ camadas. A substituição do cálculo escalar por operações matriciais na arquitetura $[2, 8, 6, 4, 1]$, aliada ao uso da função de ativação **ReLU** nas camadas ocultas, resolveu o problema do desaparecimento do gradiente (*vanishing gradient*) e permitiu à rede mapear fronteiras de decisão não lineares complexas.
+
+A adoção da **Entropia Cruzada Binária** em substituição ao Erro Quadrático Médio foi determinante para otimizar o processo de convergência, eliminando platôs de aprendizado e estabilizando a atualização dos parâmetros via Gradiente Descendente. A exatidão matemática da implementação em código puro (*NumPy*) foi rigorosamente validada por meio da **Verificação Numérica do Gradiente** (*Gradient Checking*), cujo erro relativo ficou substancialmente abaixo do limite crítico aceitável ($10^{-7}$).
+
+Mesmo diante de um cenário desafiador — caracterizado por uma base de dados gaussiana (`make_blobs`) com desbalanceamento severo e forte sobreposição entre classes —, a rede manual atingiu uma acurácia final de **97,30%** e uma perda de **0,0744**. A validação cruzada contra um modelo equivalente implementado na biblioteca *Keras/TensorFlow* confirmou a equivalência de desempenho e a correta convergência de ambas as abordagens, atestando a precisão analítica do *forward* e *backward pass* desenvolvidos do zero.
