@@ -2,7 +2,16 @@
 
 Equipe:
 
+<div align="center">
 
+| Integrantes | email |
+|---|---|
+| Cesar Moes | caccm@cin.ufpe.br |
+| Paulo Brandao | proba@cin.ufpe.br |
+| George Queiroz | gjq@cin.ufpe.br |
+| Bruno Oliveira | brunooliveirapereir@gmail.com |
+
+</div>
 
 ## Introdução
 
@@ -79,13 +88,22 @@ Conforme ilustrado nos gráficos de acompanhamento por época:
 * **Evolução da Perda:** A função de custo (Entropia Cruzada Binária) apresenta decaimento acentuado durante as primeiras épocas, estabilizando em um valor final de **0,0744**.
 * **Evolução da Acurácia:** O modelo parte de um desempenho inicial de 21,00% na época 0 e atinge **97,30%** ao término das 3.000 épocas, superando amplamente a linha de base de 66,60%.
 
+<div align="center">
+
 ![Curvas de Perda e Acurácia](image-1.png)
+
+</div>
 
 ### 2. Fronteira de Decisão
 
 A capacidade da rede profunda de separar o espaço de características bidimensional ($X \in \mathbb{R}^2$) é evidenciada na visualização da fronteira de decisão. A combinação das três camadas ocultas com ativação **ReLU** permitiu ao modelo delimitar uma região não linear complexa e contínua em torno do cluster positivo (classe 0), isolando-o do conjunto majoritário mesmo sob expressiva sobreposição gaussiana.
 
+<div align="center">
+
 ![Fronteira de Decisão](image-2.png)
+
+</div>
+
 
 ### 3. Comparativo: Rede Manual (SGD) vs. Keras (Adam)
 
@@ -94,7 +112,12 @@ Para atestar a exatidão matemática da implementação em *NumPy*, construiu-se
 * **Otimizador:** Enquanto a rede manual utiliza Gradiente Descendente Estocástico em lote completo (SGD/GD, $\eta = 0,5$), o Keras foi configurado com o otimizador *Adam* ($\eta = 0,01$), adequado para evitar estagnação em mínimos locais durante o treinamento via TensorFlow.
 * **Convergência:** Ambas as abordagens convergiram para níveis equivalentes de custo e acurácia. A rede manual alcançou acurácia final de **97,30%** com perda de **0,0744**, corroborando a corretude da arquitetura, das derivações analíticas do *backward pass* e da atualização dos parâmetros.
 
+<div align="center">
+
 ![Comparativo Rede Manual vs Keras](image-3.png)
+
+</div>
+
 
 ## 10. Conclusão
 
