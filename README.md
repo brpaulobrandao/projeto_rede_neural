@@ -15,7 +15,7 @@ O conjunto de dados foi modificado substituindo a base no formato de meia-luas p
 | Ativação da saída | Sigmoide | Sigmoide |
 | Função de perda | Erro quadrático | Entropia cruzada |
 
-### **Base de dados**
+## **Base de dados**
 
 A base de dados utilizada foi gerada pela função make_blobs,da biblioteca Scikit-learn, que gera  aglomerados (blobs) de pontos distribuidos de forma gaussiana. Essa base serve principalmente para testar e demonstrar algoritmos de aprendizado de máquina voltados para agrupamento (clustering, como o K-Means) e classificação.
 
@@ -29,4 +29,17 @@ Além disso, a estrutura original do problema, que era multinomial, foi converti
 </div>
 
 ## Arquitetura de Redes Neurais
+
+A arquitetura original da rede neural do tipo *Feedforward* (Camada única) foi expandida para uma estrutura de *Deep Feedforward* (Rede Profunda). Tal alteração envolveu o aumento do número de camadas ocultas de uma para três, bem como o incremento variado do número de neurônios artificiais em cada camada oculta.
+
+Nossa arquitetura é $[2, 8, 6, 4, 1]$: 2 entradas, três camadas escondidas (8, 6, 4 neurônios), 1 saída.
+Em código (com exemplos em linha, não em coluna), cada $W^{(l)}$ tem forma `(tamanhos[l], tamanhos[l+1])`.
+
+### Funções de ativação
+
+Em relação a funções de ativação, além da função *Sigmoid* utilizada originalmente no modelo base, a função *ReLU* (*Rectified Linear Unit*) foi escolhida para análise comparativa nas camadas ocultas.
+
+
+- **Sigmoide**: $\sigma(v) = \dfrac{1}{1+e^{-v}}$, com derivada $\sigma'(v) = \sigma(v)(1-\sigma(v))$ — usada só na saída, porque comprime o resultado entre 0 e 1 (interpretável como probabilidade).
+- **ReLU**: $\text{ReLU}(v) = \max(0, v)$, com derivada $1$ se $v>0$ e $0$ caso contrário — usada nas 3 camadas escondidas, porque sua derivada não encolhe para entradas positivas, evitando o vanishing gradient numa rede mais profunda que a original.
 
