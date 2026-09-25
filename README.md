@@ -6,6 +6,8 @@ O presente trabalho apresenta o desenvolvimento e a implementação de um modelo
 
 O conjunto de dados foi modificado substituindo a base no formato de meia-luas para agrupamentos gaussianos (blobs binarizados), nos quais foram introduzidos um elevado grau de sobreposição entre os grupos e um desbalanceamento amostral severo entre as classes. Além disso, a arquitetura de rede também foi estendida para um modelo mais profundo (*Deep Feedforward*), composto por duas camadas ocultas com três neurônios artificiais, mantendo a camada de saída com um neurônio. Além da função *Sigmoid*, a função *ReLU* (*Rectified Linear Unit*) foi introduzida para análise comparativa nas camadas ocultas. A otimização dos parâmetros foi realizada via gradiente descendente com a função de perda da Entropia de Cruzada Binária (*Binary Cross Entropy - BSE*).
 
+<div align="center">
+
 | | `exemplo4.py` | Aqui |
 |---|---|---|
 | Base de dados | make_moons | make_blobs (desbalanceada de propósito) |
@@ -14,6 +16,8 @@ O conjunto de dados foi modificado substituindo a base no formato de meia-luas p
 | Ativação das ocultas | Sigmoide | ReLU |
 | Ativação da saída | Sigmoide | Sigmoide |
 | Função de perda | Erro quadrático | Entropia cruzada |
+
+</div>
 
 ## **Base de dados**
 
@@ -43,3 +47,18 @@ Em relação a funções de ativação, além da função *Sigmoid* utilizada or
 - **Sigmoide**: $\sigma(v) = \dfrac{1}{1+e^{-v}}$, com derivada $\sigma'(v) = \sigma(v)(1-\sigma(v))$ — usada só na saída, porque comprime o resultado entre 0 e 1 (interpretável como probabilidade).
 - **ReLU**: $\text{ReLU}(v) = \max(0, v)$, com derivada $1$ se $v>0$ e $0$ caso contrário — usada nas 3 camadas escondidas, porque sua derivada não encolhe para entradas positivas, evitando o vanishing gradient numa rede mais profunda que a original.
 
+Na saída final, foi utilizada a função Sigmoide, tornando a rede ideal para tomar decisões de sim ou não (classificação binária).
+
+### Função de custo e retropropagação do erro
+
+Para medir a precisão dos palpites do modelo, foi adotada a Entropia Cruzada Binária como função de custo. Essa escolha é superior ao erro quadrático comum porque evita que o algoritmo fique "travado" em regiões sem aprendizado durante o treinamento. A combinação da função de saída com esse método de custo cria uma métrica limpa baseada na diferença direta entre a resposta correta e a previsão feita, acelerando o processo para que o modelo aprenda de forma rápida e estável.
+
+O aprendizado propriamente dito ocorre no caminho de volta (propagação reversa), onde a rede calcula o tamanho do erro cometido na saída e o distribui regressivamente por todas as camadas anteriores. Com base nessa margem de erro, o algoritmo identifica a contribuição individual de cada peso e viés da rede. Em seguida, utilizando a otimização por gradiente descendente, os parâmetros do modelo são ajustados passo a passo para reduzir as falhas em previsões futuras.
+
+Por fim, para garantir que os cálculos analíticos de ajuste de erro estivessem absolutamente corretos na implementação manual em código puro, aplicou-se a técnica de Verificação Numérica do Gradiente. Esse teste compara os resultados gerados pelas equações da rede com pequenas variações calculadas diretamente sobre a função de custo. A precisão extrema dos resultados obtidos confirma que todo o motor matemático do algoritmo funciona perfeitamente, sem a necessidade de bibliotecas externas de diferenciação automática.
+
+## Treinamento
+
+O treinamento da rede neural é executado por meio de um processo de gradiente descendente em lote completo (full-batch), no qual cada uma das 3.000 épocas processa a totalidade dos 1.000 exemplos do conjunto de dados de uma só vez. A cada ciclo, o algoritmo calcula a propagação direta (forward), avalia a função de perda e a acurácia, obtém os gradientes via propagação reversa (backward) e atualiza os pesos e viéses utilizando uma taxa de aprendizado ($\eta$) de 0,5. Para garantir um aprendizado fidedigno e sem vazamento de estados anteriores, os parâmetros da rede são reinicializados do zero no início do procedimento com uma semente fixa.
+
+Os resultados demonstraram a eficácia do modelo em aprender os padrões da base de dados, composta por 334 exemplos positivos e 666 negativos. Enquanto a linha de base ingênua — que consiste em classificar sempre a classe majoritária — atinge uma acurácia de 66,60%, o modelo inicia a primeira época com uma perda de 0,7284 e acurácia de apenas 21,00%. Ao longo do treinamento, a rede apresenta uma convergência contínua, reduzindo progressivamente o custo e alcançando, ao final das 3.000 épocas, uma perda final de 0,0744 e uma acurácia final de 97,30%, superando amplamente o desempenho de referência.
